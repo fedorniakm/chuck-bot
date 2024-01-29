@@ -1,7 +1,6 @@
 package com.fedorniakm.expenses.bot.handler;
 
 import lombok.Setter;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -9,12 +8,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @Component
 @Slf4j
-public class StartCommandProcessor implements UpdateProcessor {
+public class StartCommandProcessor extends UpdateProcessor {
 
     private static final String GREETING_MESSAGE = """
             Привіт! Я Чак - обліковий собак. Я веду облік твоїх витрат. Гав!
@@ -49,12 +47,12 @@ public class StartCommandProcessor implements UpdateProcessor {
     }
 
     @Override
-    public Optional<UpdateProcessor> next() {
+    protected Optional<UpdateProcessor> next() {
         return Optional.ofNullable(nextProcessor);
     }
 
     @Override
-    public void processCurrent(Update update, AbsSender sender) {
+    protected void processCurrent(Update update, AbsSender sender) {
         var response = new SendMessage();
         response.setChatId(update.getMessage().getChatId());
         response.setText(GREETING_MESSAGE);
@@ -67,7 +65,7 @@ public class StartCommandProcessor implements UpdateProcessor {
     }
 
     @Override
-    public boolean isProcessable(Update update) {
+    protected boolean isProcessable(Update update) {
         return update.hasMessage()
                 && update.getMessage().hasText()
                 && isStartCommand(update.getMessage().getText());

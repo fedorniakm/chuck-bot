@@ -5,19 +5,20 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.util.Optional;
 
-public interface UpdateProcessor {
+public abstract class UpdateProcessor implements Processor<Update, AbsSender> {
 
-    default void process(final Update update, final AbsSender sender) {
+    @Override
+    public void process(final Update update, final AbsSender sender) {
         if (isProcessable(update)) {
             processCurrent(update, sender);
         }
         next().ifPresent(processor -> processor.process(update, sender));
     }
 
-    Optional<UpdateProcessor> next();
+    protected abstract Optional<UpdateProcessor> next();
 
-    void processCurrent(final Update update, final AbsSender sender);
+    protected abstract void processCurrent(final Update update, final AbsSender sender);
 
-    boolean isProcessable(final Update update);
+    protected abstract boolean isProcessable(final Update update);
 
 }
