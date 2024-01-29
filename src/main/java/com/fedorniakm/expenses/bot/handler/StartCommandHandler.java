@@ -1,20 +1,13 @@
 package com.fedorniakm.expenses.bot.handler;
 
 import com.fedorniakm.expenses.bot.ResponseService;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.bots.AbsSender;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.util.Optional;
 
 @Component
 @Slf4j
-public class StartCommandProcessor extends UpdateProcessor {
+public class StartCommandHandler extends UpdateHandler {
 
     private static final String COMMAND = "start";
 
@@ -41,12 +34,12 @@ public class StartCommandProcessor extends UpdateProcessor {
             /stat - статистика витрат
             """;
 
-    protected StartCommandProcessor(ResponseService responseService) {
+    protected StartCommandHandler(ResponseService responseService) {
         super(responseService);
     }
 
     @Override
-    protected void processCurrent(Update update) {
+    protected void handleCurrent(Update update) {
         log.info("StartCommandProcessor -> processing /start command");
         var chatId = update.getMessage().getChatId();
         response.sendMessage(chatId, GREETING_MESSAGE);

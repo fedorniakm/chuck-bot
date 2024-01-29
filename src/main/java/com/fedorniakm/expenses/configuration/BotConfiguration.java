@@ -1,8 +1,8 @@
 package com.fedorniakm.expenses.configuration;
 
-import com.fedorniakm.expenses.bot.DefaultHandlerChain;
-import com.fedorniakm.expenses.bot.HandlerChain;
-import com.fedorniakm.expenses.bot.handler.UpdateProcessor;
+import com.fedorniakm.expenses.bot.chain.DefaultHandlerChain;
+import com.fedorniakm.expenses.bot.chain.HandlerChain;
+import com.fedorniakm.expenses.bot.handler.UpdateHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.bots.*;
@@ -26,7 +26,7 @@ public class BotConfiguration {
     }
 
     @Bean
-    public HandlerChain handlerChain(UpdateProcessor... processors) {
+    public HandlerChain handlerChain(UpdateHandler... processors) {
         return new DefaultHandlerChain(processors);
     }
 

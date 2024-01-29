@@ -3,16 +3,16 @@ package com.fedorniakm.expenses.bot.handler;
 import com.fedorniakm.expenses.bot.ResponseService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-public class GroupCommandProcessor extends UpdateProcessor{
+public class GroupCommandHandler extends UpdateHandler {
 
     private static final String COMMANDS = "groups|newgroup|deletegroup";
 
-    protected GroupCommandProcessor(ResponseService responseService) {
+    protected GroupCommandHandler(ResponseService responseService) {
         super(responseService);
     }
 
     @Override
-    protected void processCurrent(Update update) {
+    protected void handleCurrent(Update update) {
 
     }
 
