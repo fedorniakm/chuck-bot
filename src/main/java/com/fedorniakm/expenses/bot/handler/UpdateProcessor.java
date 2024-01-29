@@ -1,23 +1,34 @@
 package com.fedorniakm.expenses.bot.handler;
-
+import com.fedorniakm.expenses.bot.ResponseService;
+import lombok.Setter;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.util.Optional;
 
-public abstract class UpdateProcessor implements Processor<Update, AbsSender> {
+public abstract class UpdateProcessor implements Processor<Update> {
 
-    @Override
-    public void process(final Update update, final AbsSender sender) {
-        if (isProcessable(update)) {
-            processCurrent(update, sender);
-        }
-        next().ifPresent(processor -> processor.process(update, sender));
+    protected final ResponseService response;
+
+    @Setter
+    protected UpdateProcessor nextProcessor;
+
+    protected UpdateProcessor(ResponseService responseService) {
+        response = responseService;
     }
 
-    protected abstract Optional<UpdateProcessor> next();
+    @Override
+    public void process(final Update update) {
+        if (isProcessable(update)) {
+            processCurrent(update);
+        }
+        next().ifPresent(processor -> processor.process(update));
+    }
 
-    protected abstract void processCurrent(final Update update, final AbsSender sender);
+    protected Optional<UpdateProcessor> next() {
+        return Optional.ofNullable(nextProcessor);
+    }
+
+    protected abstract void processCurrent(final Update update);
 
     protected abstract boolean isProcessable(final Update update);
 

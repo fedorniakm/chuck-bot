@@ -1,7 +1,9 @@
 package com.fedorniakm.expenses.bot.handler;
 
+import com.fedorniakm.expenses.bot.ResponseService;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -14,6 +16,8 @@ import java.util.Optional;
 @Slf4j
 public class StartCommandProcessor extends UpdateProcessor {
 
+    private static final String COMMAND = "start";
+
     private static final String GREETING_MESSAGE = """
             Привіт! Я Чак - обліковий собак. Я веду облік твоїх витрат. Гав!
             Ти можеш створювати Групи витрат для різних потреб та додавати туди інших користувачів за потреби. Наприклад:
@@ -24,7 +28,7 @@ public class StartCommandProcessor extends UpdateProcessor {
             
             Ти можеш контролювати свої витрати надсилаючи ці команди:
             
-            /mygroups - список всі твїх груп
+            /groups - список всі твїх груп
             /newgroup [назва групи] - створити нову групу витрат
             /deletegroup [назва групи] - видалити групу
             
@@ -37,31 +41,15 @@ public class StartCommandProcessor extends UpdateProcessor {
             /stat - статистика витрат
             """;
 
-    @Setter
-    private UpdateProcessor nextProcessor;
-
-    public StartCommandProcessor() {}
-
-    public StartCommandProcessor(UpdateProcessor nextProcessor) {
-        this.nextProcessor = nextProcessor;
+    protected StartCommandProcessor(ResponseService responseService) {
+        super(responseService);
     }
 
     @Override
-    protected Optional<UpdateProcessor> next() {
-        return Optional.ofNullable(nextProcessor);
-    }
-
-    @Override
-    protected void processCurrent(Update update, AbsSender sender) {
-        var response = new SendMessage();
-        response.setChatId(update.getMessage().getChatId());
-        response.setText(GREETING_MESSAGE);
-        log.info("StartCommandProcessor -> processed start command");
-        try {
-            sender.execute(response);
-        } catch (TelegramApiException e) {
-            log.error("StartCommandProcessor -> exception handled", e);
-        }
+    protected void processCurrent(Update update) {
+        log.info("StartCommandProcessor -> processing /start command");
+        var chatId = update.getMessage().getChatId();
+        response.sendMessage(chatId, GREETING_MESSAGE);
     }
 
     @Override
@@ -72,6 +60,6 @@ public class StartCommandProcessor extends UpdateProcessor {
     }
 
     private boolean isStartCommand(String message) {
-        return message.matches("^\\/start.*$");
+        return message.matches("^\\/" + COMMAND + ".*$");
     }
 }

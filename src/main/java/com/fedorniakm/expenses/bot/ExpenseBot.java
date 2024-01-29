@@ -1,6 +1,7 @@
 package com.fedorniakm.expenses.bot;
 
-import com.fedorniakm.expenses.bot.handler.StartCommandProcessor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -8,18 +9,22 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+@Service
 public class ExpenseBot extends TelegramLongPollingBot {
 
     private final String botUsername;
 
     private final Executor executor;
 
-    private final StartCommandProcessor startCommandProcessor;
+    private final HandlerChain handlerChain;
 
-    public ExpenseBot(DefaultBotOptions options, String botToken, String botUsername, StartCommandProcessor startCommandProcessor) {
+    public ExpenseBot(DefaultBotOptions options,
+                      @Value("${bot-token}")String botToken,
+                      @Value("${bot-username}") String botUsername,
+                      HandlerChain handlerChain) {
         super(options, botToken);
         this.botUsername = botUsername;
-        this.startCommandProcessor = startCommandProcessor;
+        this.handlerChain = handlerChain;
         this.executor = Executors.newCachedThreadPool();
     }
 
@@ -30,7 +35,9 @@ public class ExpenseBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        executor.execute(() -> startCommandProcessor.process(update, this));
+        executor.execute(
+                () -> handlerChain.process(update)
+        );
     }
 
 }

@@ -1,8 +1,8 @@
 package com.fedorniakm.expenses.configuration;
 
-import com.fedorniakm.expenses.bot.ExpenseBot;
-import com.fedorniakm.expenses.bot.handler.StartCommandProcessor;
-import org.springframework.beans.factory.annotation.Value;
+import com.fedorniakm.expenses.bot.DefaultHandlerChain;
+import com.fedorniakm.expenses.bot.HandlerChain;
+import com.fedorniakm.expenses.bot.handler.UpdateProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.bots.*;
@@ -14,6 +14,11 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 public class BotConfiguration {
 
     @Bean
+    public DefaultBotOptions botOptions() {
+        return new DefaultBotOptions();
+    }
+
+    @Bean
     public TelegramBotsApi telegramBotsApi(TelegramLongPollingBot bot) throws TelegramApiException {
         var telegramApi = new TelegramBotsApi(DefaultBotSession.class);
         telegramApi.registerBot(bot);
@@ -21,15 +26,9 @@ public class BotConfiguration {
     }
 
     @Bean
-    public TelegramLongPollingBot telegramLongPollingBot(DefaultBotOptions botOptions,
-                                                         @Value("${bot-token}") String botToken,
-                                                         @Value("${bot-username}") String botUsername,
-                                                         StartCommandProcessor startCommandHandler) {
-        return new ExpenseBot(botOptions, botToken, botUsername, startCommandHandler);
+    public HandlerChain handlerChain(UpdateProcessor... processors) {
+        return new DefaultHandlerChain(processors);
     }
 
-    @Bean
-    public DefaultBotOptions botOptions() {
-        return new DefaultBotOptions();
-    }
+
 }
