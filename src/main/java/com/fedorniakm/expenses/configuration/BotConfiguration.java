@@ -1,6 +1,7 @@
 package com.fedorniakm.expenses.configuration;
 
 import com.fedorniakm.expenses.bot.ExpenseBot;
+import com.fedorniakm.expenses.bot.handler.StartCommandProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,9 +22,10 @@ public class BotConfiguration {
 
     @Bean
     public TelegramLongPollingBot telegramLongPollingBot(DefaultBotOptions botOptions,
+                                                         @Value("${bot-token}") String botToken,
                                                          @Value("${bot-username}") String botUsername,
-                                                         @Value("${bot-token}") String botToken) {
-        return new ExpenseBot(botOptions, botUsername, botToken);
+                                                         StartCommandProcessor startCommandHandler) {
+        return new ExpenseBot(botOptions, botToken, botUsername, startCommandHandler);
     }
 
     @Bean

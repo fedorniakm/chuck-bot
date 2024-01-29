@@ -1,22 +1,26 @@
 package com.fedorniakm.expenses.bot;
 
-import lombok.Setter;
+import com.fedorniakm.expenses.bot.handler.StartCommandProcessor;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class ExpenseBot extends TelegramLongPollingBot {
 
     private final String botUsername;
 
-    @Setter
-    private UpdateProcessor updateProcessor;
+    private final Executor executor;
 
-    public ExpenseBot(DefaultBotOptions options, String botToken, String botUsername) {
+    private final StartCommandProcessor startCommandProcessor;
+
+    public ExpenseBot(DefaultBotOptions options, String botToken, String botUsername, StartCommandProcessor startCommandProcessor) {
         super(options, botToken);
         this.botUsername = botUsername;
+        this.startCommandProcessor = startCommandProcessor;
+        this.executor = Executors.newCachedThreadPool();
     }
 
     @Override
@@ -26,8 +30,7 @@ public class ExpenseBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        updateProcessor.process(update);
+        executor.execute(() -> startCommandProcessor.process(update, this));
     }
-
 
 }
