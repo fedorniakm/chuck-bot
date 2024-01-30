@@ -1,6 +1,9 @@
 package com.fedorniakm.expenses.bot.handler;
 
 import com.fedorniakm.expenses.bot.ResponseService;
+import com.fedorniakm.expenses.bot.util.UserUtil;
+import com.fedorniakm.expenses.service.TelegramUserService;
+import com.fedorniakm.expenses.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -34,15 +37,54 @@ public class StartCommandHandler extends UpdateHandler {
             /stat - статистика витрат
             """;
 
-    protected StartCommandHandler(ResponseService responseService) {
+    private final UserService userService;
+
+    private final TelegramUserService telegramUserService;
+
+    protected StartCommandHandler(ResponseService responseService, UserService userService, TelegramUserService telegramUserService) {
         super(responseService);
+        this.userService = userService;
+        this.telegramUserService = telegramUserService;
     }
 
     @Override
     protected void handleCurrent(Update update) {
         log.info("StartCommandProcessor -> processing /start command");
+
+        var tgUser = UserUtil.mapUser(update.getMessage().getFrom());
+        var isFirstVisit = telegramUserService.existsById(tgUser.getId());
+
         var chatId = update.getMessage().getChatId();
         response.sendMessage(chatId, GREETING_MESSAGE);
+
+        if (isFirstVisit) {
+            tgUser = telegramUserService.init(tgUser);
+            //TODO: init new user with default group and category
+            response.sendMessage(chatId, "Схоже ти тут вперше. " +
+                    "В такому разі, я на*Чак*лував тобі нову групу \"Персональні витрати\" " +
+                    "і категорію витрат - \"Інші\"." +
+                    "Аби всі витрати не потрапляли в цю категорію, не соромся створити нові категорії! " +
+                    "Використай для цього команду /newcategory");
+        } else {
+            tgUser = telegramUserService.synchronise(tgUser);
+            var responseText = new StringBuilder("Схоже ти тут вже бував!");
+            responseText.append("Твоя поточна група: ")
+                    .append(tgUser.getCurrentGroup().getTitle())
+                    .append("\n");
+            var groups = tgUser.getUser().getGroups();
+
+            if (groups.size() > 1) {
+                responseText.append("Зазначу, що у тебе є ще групи, ось всі:\n");
+                groups.forEach(g -> responseText
+                        .append("- ")
+                        .append(g.getTitle())
+                        .append("\n"));
+            }
+
+            response.sendMessage(chatId, responseText.toString());
+        }
+
+
     }
 
     @Override
