@@ -12,16 +12,16 @@ import java.util.Objects;
 public class TelegramUserService {
 
 
-    private final UserService userService;
+    private final PlatformUserService platformUserService;
 
     private final TelegramUserRepository tgUserRepo;
 
     public TelegramUser createNew(TelegramUser tgUser) {
         Objects.requireNonNull(tgUser);
         var userName = tgUser.getFirstName() + " " + tgUser.getLastName();
-        var user = userService.createUser(userName);
+        var user = platformUserService.createUser(userName);
 
-        tgUser.setUser(user);
+        tgUser.setPlatformUser(user);
 
         tgUserRepo.save(tgUser);
         return tgUserRepo.save(tgUser);

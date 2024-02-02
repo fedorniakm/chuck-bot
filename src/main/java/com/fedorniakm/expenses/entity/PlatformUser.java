@@ -16,7 +16,7 @@ import java.util.Set;
 @ToString
 @EqualsAndHashCode(exclude = {"groups", "expenses"})
 @Builder
-public class User {
+public class PlatformUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -43,9 +43,9 @@ public class User {
     @NotNull
     private Set<Expense> expenses = new HashSet<>();
 
-    public User() { }
+    public PlatformUser() { }
 
-    public User(Long id, TelegramUser telegramUser, String name, LocalDateTime createDate, Set<Group> groups, Set<Expense> expenses) {
+    public PlatformUser(Long id, TelegramUser telegramUser, String name, LocalDateTime createDate, Set<Group> groups, Set<Expense> expenses) {
         this.id = id;
         this.telegramUser = telegramUser;
         this.name = name;
@@ -64,14 +64,14 @@ public class User {
     public void setExpenses(Set<Expense> expenses) {
         this.expenses = expenses;
         this.expenses.forEach(
-                expense -> expense.setUser(this)
+                expense -> expense.setPlatformUser(this)
         );
     }
 
     public void setTelegramUser(TelegramUser telegramUser) {
         this.telegramUser = telegramUser;
-        if (!this.telegramUser.getUser().equals(this)) {
-            this.telegramUser.setUser(this);
+        if (!this.telegramUser.getPlatformUser().equals(this)) {
+            this.telegramUser.setPlatformUser(this);
         }
     }
 
@@ -82,7 +82,7 @@ public class User {
 
     public void addExpense(Expense expense) {
         this.expenses.add(expense);
-        expense.setUser(this);
+        expense.setPlatformUser(this);
     }
 
 }

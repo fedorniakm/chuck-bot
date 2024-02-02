@@ -36,16 +36,16 @@ public class TelegramUser {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private PlatformUser platformUser;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "current_group_id")
     private Group currentGroup;
 
-    public void setUser(User user) {
-        this.user = user;
-        if (!this.user.getTelegramUser().equals(this)) {
-            this.user.setTelegramUser(this);
+    public void setPlatformUser(PlatformUser platformUser) {
+        this.platformUser = platformUser;
+        if (!this.platformUser.getTelegramUser().equals(this)) {
+            this.platformUser.setTelegramUser(this);
         }
     }
 }

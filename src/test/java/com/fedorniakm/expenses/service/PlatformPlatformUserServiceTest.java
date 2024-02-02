@@ -2,7 +2,7 @@ package com.fedorniakm.expenses.service;
 
 import com.fedorniakm.expenses.entity.ExpenseCategory;
 import com.fedorniakm.expenses.entity.Group;
-import com.fedorniakm.expenses.entity.User;
+import com.fedorniakm.expenses.entity.PlatformUser;
 import com.fedorniakm.expenses.repository.ExpenseCategoryRepository;
 import com.fedorniakm.expenses.repository.GroupRepository;
 import com.fedorniakm.expenses.repository.UserRepository;
@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-class UserServiceTest {
+class PlatformPlatformUserServiceTest {
 
     @Autowired
-    private UserService service;
+    private PlatformUserService service;
 
     @Autowired
     private UserRepository userRepository;
@@ -60,7 +60,7 @@ class UserServiceTest {
 
     @Test
     void delete_DeleteUser_UserIsDeleted() {
-        var user = User.builder()
+        var user = PlatformUser.builder()
                 .name("John Doe")
                 .build();
         userRepository.save(user);
@@ -77,7 +77,7 @@ class UserServiceTest {
         var g2 = Group.builder().name("Group2").build();
         var g3 = Group.builder().name("Group3").build();
         var groups = Set.of(g1, g2, g3);
-        var user = User.builder()
+        var user = PlatformUser.builder()
                 .name("John Doe")
                 .groups(groups)
                 .build();
@@ -105,7 +105,7 @@ class UserServiceTest {
         group.addExpenseCategory(c1);
         group.addExpenseCategory(c2);
         group.addExpenseCategory(c3);
-        var user = User.builder().name("John Doe").build();
+        var user = PlatformUser.builder().name("John Doe").build();
         user.addGroup(group);
         userRepository.save(user);
 

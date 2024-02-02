@@ -25,7 +25,7 @@ public class ExpenseCategory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private PlatformUser platformUser;
 
     @ManyToOne
     @JoinColumn(name = "group_id")

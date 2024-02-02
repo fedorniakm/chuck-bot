@@ -27,14 +27,14 @@ public class Group {
 
     @ManyToOne
     @JoinColumn(name = "creator_id")
-    private User creator;
+    private PlatformUser creator;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "group_members",
             joinColumns = @JoinColumn(name="group_id", referencedColumnName="id"),
             inverseJoinColumns = @JoinColumn(name="user_id", referencedColumnName="id"))
     @NotNull
-    private Set<User> members = new HashSet<>();
+    private Set<PlatformUser> members = new HashSet<>();
 
     @OneToMany(mappedBy = "group",
             cascade = ALL,
@@ -50,7 +50,7 @@ public class Group {
 
     public Group() {}
 
-    public Group(Long id, String name, User creator, Set<User> members, Set<Expense> expenses, Set<ExpenseCategory> expenseCategories) {
+    public Group(Long id, String name, PlatformUser creator, Set<PlatformUser> members, Set<Expense> expenses, Set<ExpenseCategory> expenseCategories) {
         this.id = id;
         this.name = name;
         this.creator = creator;
@@ -76,17 +76,17 @@ public class Group {
         this.expenses.forEach(e -> e.setGroup(this));
     }
 
-    public void addMember(User member) {
+    public void addMember(PlatformUser member) {
         this.members.add(member);
         member.getGroups().add(this);
     }
 
-    public void setMembers(Set<User> members) {
+    public void setMembers(Set<PlatformUser> members) {
         this.members = members;
         members.forEach(member -> member.getGroups().add(this));
     }
 
-    public void setCreator(User creator) {
+    public void setCreator(PlatformUser creator) {
         this.creator = creator;
         this.members.add(creator);
         creator.getGroups().add(this);

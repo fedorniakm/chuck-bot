@@ -33,7 +33,7 @@ public class Expense {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private PlatformUser platformUser;
 
     @Column(name = "note")
     private String note;
@@ -49,8 +49,8 @@ public class Expense {
         this.group.getExpenses().add(this);
     }
 
-    public void setUser(User user) {
-        this.user = user;
-        this.user.getExpenses().add(this);
+    public void setPlatformUser(PlatformUser platformUser) {
+        this.platformUser = platformUser;
+        this.platformUser.getExpenses().add(this);
     }
 }

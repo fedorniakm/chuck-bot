@@ -3,7 +3,7 @@ package com.fedorniakm.expenses.bot.handler;
 import com.fedorniakm.expenses.bot.ResponseService;
 import com.fedorniakm.expenses.bot.util.UserUtil;
 import com.fedorniakm.expenses.service.TelegramUserService;
-import com.fedorniakm.expenses.service.UserService;
+import com.fedorniakm.expenses.service.PlatformUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -37,13 +37,13 @@ public class StartCommandHandler extends UpdateHandler {
             /stat - статистика витрат
             """;
 
-    private final UserService userService;
+    private final PlatformUserService platformUserService;
 
     private final TelegramUserService telegramUserService;
 
-    protected StartCommandHandler(ResponseService responseService, UserService userService, TelegramUserService telegramUserService) {
+    protected StartCommandHandler(ResponseService responseService, PlatformUserService platformUserService, TelegramUserService telegramUserService) {
         super(responseService);
-        this.userService = userService;
+        this.platformUserService = platformUserService;
         this.telegramUserService = telegramUserService;
     }
 
@@ -71,7 +71,7 @@ public class StartCommandHandler extends UpdateHandler {
             responseText.append("Твоя поточна група: ")
                     .append(tgUser.getCurrentGroup().getName())
                     .append("\n");
-            var groups = tgUser.getUser().getGroups();
+            var groups = tgUser.getPlatformUser().getGroups();
 
             if (groups.size() > 1) {
                 responseText.append("Зазначу, що у тебе є ще групи, ось всі:\n");
