@@ -3,6 +3,8 @@ package com.fedorniakm.expenses.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "telegram_users")
 @NoArgsConstructor
@@ -28,6 +30,9 @@ public class TelegramUser {
 
     @Column(name = "language_code")
     private String languageCode;
+
+    @Column(name = "create_date")
+    private LocalDateTime createDate = LocalDateTime.now();
 
     @OneToOne
     @JoinColumn(name = "user_id")

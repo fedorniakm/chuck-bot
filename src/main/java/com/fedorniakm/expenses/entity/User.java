@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -27,6 +28,9 @@ public class User {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "create_date")
+    private LocalDateTime createDate = LocalDateTime.now();
+
     @ManyToMany(mappedBy = "members",
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER)
@@ -41,16 +45,13 @@ public class User {
 
     public User() { }
 
-    public User(Long id, TelegramUser telegramUser, String name, Set<Group> groups, Set<Expense> expenses) {
+    public User(Long id, TelegramUser telegramUser, String name, LocalDateTime createDate, Set<Group> groups, Set<Expense> expenses) {
         this.id = id;
         this.telegramUser = telegramUser;
         this.name = name;
-        if (Objects.nonNull(groups)) {
-            this.groups = groups;
-        }
-        if (Objects.nonNull(expenses)) {
-            this.expenses = expenses;
-        }
+        this.createDate = Objects.requireNonNullElseGet(createDate, LocalDateTime::now);
+        setGroups(Objects.requireNonNullElseGet(groups, HashSet::new));
+        setExpenses(Objects.requireNonNullElseGet(expenses, HashSet::new));
     }
 
     public void setGroups(Set<Group> groups) {

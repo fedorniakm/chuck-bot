@@ -58,7 +58,7 @@ public class StartCommandHandler extends UpdateHandler {
         response.sendMessage(chatId, GREETING_MESSAGE);
 
         if (isFirstVisit) {
-            tgUser = telegramUserService.create(tgUser);
+            tgUser = telegramUserService.createNew(tgUser);
             //TODO: init new user with default group and category
             response.sendMessage(chatId, "Схоже ти тут вперше. " +
                     "В такому разі, я на*Чак*лував тобі нову групу \"Персональні витрати\" " +
