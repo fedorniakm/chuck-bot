@@ -5,6 +5,8 @@ import lombok.*;
 
 @Entity
 @Table(name = "telegram_users")
+@NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
 @ToString
@@ -31,7 +33,7 @@ public class TelegramUser {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "current_group_id")
     private Group currentGroup;
 

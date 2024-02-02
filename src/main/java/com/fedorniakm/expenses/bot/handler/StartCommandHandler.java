@@ -58,7 +58,7 @@ public class StartCommandHandler extends UpdateHandler {
         response.sendMessage(chatId, GREETING_MESSAGE);
 
         if (isFirstVisit) {
-            tgUser = telegramUserService.init(tgUser);
+            tgUser = telegramUserService.create(tgUser);
             //TODO: init new user with default group and category
             response.sendMessage(chatId, "Схоже ти тут вперше. " +
                     "В такому разі, я на*Чак*лував тобі нову групу \"Персональні витрати\" " +
@@ -66,10 +66,10 @@ public class StartCommandHandler extends UpdateHandler {
                     "Аби всі витрати не потрапляли в цю категорію, не соромся створити нові категорії! " +
                     "Використай для цього команду /newcategory");
         } else {
-            tgUser = telegramUserService.synchronise(tgUser);
+            tgUser = telegramUserService.save(tgUser);
             var responseText = new StringBuilder("Схоже ти тут вже бував!");
             responseText.append("Твоя поточна група: ")
-                    .append(tgUser.getCurrentGroup().getTitle())
+                    .append(tgUser.getCurrentGroup().getName())
                     .append("\n");
             var groups = tgUser.getUser().getGroups();
 
@@ -77,7 +77,7 @@ public class StartCommandHandler extends UpdateHandler {
                 responseText.append("Зазначу, що у тебе є ще групи, ось всі:\n");
                 groups.forEach(g -> responseText
                         .append("- ")
-                        .append(g.getTitle())
+                        .append(g.getName())
                         .append("\n"));
             }
 

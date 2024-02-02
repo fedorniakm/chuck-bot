@@ -1,8 +1,11 @@
 package com.fedorniakm.expenses.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static jakarta.persistence.CascadeType.*;
@@ -12,33 +15,49 @@ import static jakarta.persistence.CascadeType.*;
 @Setter
 @Getter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"members", "expenses", "expenseCategories"})
 @Builder
 public class Group {
 
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name = "title")
-    private String title;
+    @Column(name = "name")
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private User creator;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "group_members",
             joinColumns = @JoinColumn(name="group_id", referencedColumnName="id"),
             inverseJoinColumns = @JoinColumn(name="user_id", referencedColumnName="id"))
-    private Set<User> members;
+    @NotNull
+    private Set<User> members = new HashSet<>();
 
     @OneToMany(mappedBy = "group",
-            cascade = ALL)
-    private Set<Expense> expenses;
+            cascade = ALL,
+            fetch = FetchType.EAGER)
+    @NotNull
+    private Set<Expense> expenses = new HashSet<>();
 
     @OneToMany(mappedBy = "group",
-            cascade = ALL)
-    private Set<ExpenseCategory> expenseCategories;
+            cascade = ALL,
+            fetch = FetchType.EAGER)
+    @NotNull
+    private Set<ExpenseCategory> expenseCategories = new HashSet<>();
+
+    public Group() {}
+
+    public Group(Long id, String name, User creator, Set<User> members, Set<Expense> expenses, Set<ExpenseCategory> expenseCategories) {
+        this.id = id;
+        this.name = name;
+        this.creator = creator;
+        this.members = Objects.requireNonNullElseGet(members, HashSet::new);
+        this.expenses = Objects.requireNonNullElseGet(expenses, HashSet::new);
+        this.expenseCategories = Objects.requireNonNullElseGet(expenseCategories, HashSet::new);
+    }
 
     public void addExpense(Expense e) {
         expenses.add(e);
@@ -69,6 +88,7 @@ public class Group {
 
     public void setCreator(User creator) {
         this.creator = creator;
+        this.members.add(creator);
         creator.getGroups().add(this);
     }
 

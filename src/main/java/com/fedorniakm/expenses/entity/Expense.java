@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"group", "expenseCategory", "user"})
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Expense {
 

@@ -1,8 +1,11 @@
 package com.fedorniakm.expenses.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -10,7 +13,7 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"groups", "expenses"})
 @Builder
 public class User {
 
@@ -25,12 +28,30 @@ public class User {
     private String name;
 
     @ManyToMany(mappedBy = "members",
-            cascade = CascadeType.ALL)
-    private Set<Group> groups;
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
+    @NotNull
+    private Set<Group> groups = new HashSet<>();
 
     @OneToMany(mappedBy = "user",
-            cascade = CascadeType.ALL)
-    private Set<Expense> expenses;
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
+    @NotNull
+    private Set<Expense> expenses = new HashSet<>();
+
+    public User() { }
+
+    public User(Long id, TelegramUser telegramUser, String name, Set<Group> groups, Set<Expense> expenses) {
+        this.id = id;
+        this.telegramUser = telegramUser;
+        this.name = name;
+        if (Objects.nonNull(groups)) {
+            this.groups = groups;
+        }
+        if (Objects.nonNull(expenses)) {
+            this.expenses = expenses;
+        }
+    }
 
     public void setGroups(Set<Group> groups) {
         this.groups = groups;

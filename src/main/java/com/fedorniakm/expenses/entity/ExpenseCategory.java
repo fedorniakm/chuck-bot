@@ -8,7 +8,9 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"user", "group"})
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ExpenseCategory {
 
